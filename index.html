@@ -1,6 +1,221 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Home</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Anywhere</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .top-bar {
+            width: 100%;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .top-bar a:hover {
+            text-decoration: underline;
+        }
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+        }
+        .toggle-switch input {
+            display: none;
+        }
+        .toggle-switch label {
+            cursor: pointer;
+            background-color: #ccc;
+            border-radius: 20px;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+        }
+        .toggle-switch label span {
+            margin-left: 5px;
+            font-size: 14px;
+        }
+        .toggle-switch input:checked + label {
+            background-color: #4CAF50;
+        }
+        .toggle-switch input:checked + label span:before {
+            content: 'Dark Mode';
+        }
+        .toggle-switch label span:before {
+            content: 'Light Mode';
+        }
+        .search-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+            margin-top: 60px; /* Adjust for the top bar */
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        .search-box select {
+            padding: 10px;
+            border: none;
+            background-color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            width: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .search-box select:focus {
+            outline: none;
+        }
+        .search-box input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            font-size: 16px;
+            background-color: #fff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .search-box input[type="text"]:focus {
+            outline: none;
+        }
+        .search-box button {
+            width: 50px;
+            height: 40px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .search-box button i {
+            font-size: 18px;
+        }
+        .search-box img {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #333;
+            color: white;
+        }
+        body.dark-mode .search-container {
+            background-color: #444;
+            color: white;
+        }
+        body.dark-mode .search-box {
+            border-color: #555;
+        }
+        body.dark-mode .search-box select,
+        body.dark-mode .search-box input[type="text"] {
+            background-color: #555;
+            color: white;
+        }
+        body.dark-mode .search-box input::placeholder {
+            color: #ccc;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+<body>
+    <div class="top-bar">
+        <div class="links">
+            <a href="https://www.youtube.com" target="_blank">YouTube</a>
+            <a href="https://mail.google.com" target="_blank">Gmail</a>
+            <a href="https://mail.yahoo.com" target="_blank">Yahoo Mail</a>
+            <a href="https://www.facebook.com" target="_blank">Facebook</a>
+            <a href="https://chat.openai.com" target="_blank">ChatGPT</a>
+        </div>
+        <div class="toggle-switch">
+            <input type="checkbox" id="modeToggle">
+            <label for="modeToggle"><span></span></label>
+        </div>
+    </div>
+
+    <div class="search-container">
+        <h1>Search Anywhere</h1>
+        <form id="searchForm" action="https://www.google.com/search" method="get" target="_blank">
+            <div class="search-box">
+                <img id="engineIcon" src="https://www.google.com/favicon.ico" alt="Engine Icon">
+                <select id="engineSelect" name="engine">
+                    <option value="https://www.google.com/search" data-icon="https://www.google.com/favicon.ico">   Google</option>
+                    <option value="https://www.bing.com/search" data-icon="https://www.bing.com/sa/simg/favicon-2x.ico">   Bing</option>
+                    <option value="https://www.amazon.com/s" data-icon="https://www.amazon.com/favicon.ico">   Amazon</option>
+                    <option value="https://duckduckgo.com/" data-icon="https://duckduckgo.com/favicon.ico">   DuckDuckGo</option>
+                </select>
+                <input type="text" name="q" placeholder="Search with Google..." required>
+                <button type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Toggle light/dark mode
+        const modeToggle = document.getElementById('modeToggle');
+        const body = document.body;
+
+        modeToggle.addEventListener('change', function() {
+            body.classList.toggle('dark-mode');
+        });
+
+        document.getElementById('engineSelect').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const selectedEngine = selectedOption.value;
+            const iconSrc = selectedOption.getAttribute('data-icon');
+            const form = document.getElementById('searchForm');
+            const input = document.querySelector('.search-box input[type="text"]');
+            const engineIcon = document.getElementById('engineIcon');
+
+            if (selectedEngine === 'https://www.amazon.com/s') {
+                form.action = selectedEngine;
+                form.method = 'get';
+                form.name = 'field-keywords';
+            } else {
+                form.action = selectedEngine;
+                form.method = 'get';
+                form.name = 'q';
+            }
+
+            input.placeholder = `Search with ${selectedOption.text}...`;
+            engineIcon.src = iconSrc;
+            engineIcon.alt = `${selectedOption.text} Icon`;
+        });
+    </script>
+</body>
 </html>
