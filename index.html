@@ -38,9 +38,14 @@
         .top-bar a:hover {
             text-decoration: underline;
         }
+        .settings {
+            display: flex;
+            align-items: center;
+        }
         .toggle-switch {
             display: flex;
             align-items: center;
+            margin-right: 20px;
         }
         .toggle-switch input {
             display: none;
@@ -65,6 +70,9 @@
         }
         .toggle-switch label span:before {
             content: 'Light Mode';
+        }
+        .language-selector {
+            margin-right: 20px;
         }
         .search-container {
             background-color: #fff;
@@ -160,9 +168,20 @@
             <a href="https://www.facebook.com">Facebook</a>
             <a href="https://chat.openai.com">ChatGPT</a>
         </div>
-        <div class="toggle-switch">
-            <input type="checkbox" id="modeToggle">
-            <label for="modeToggle"><span></span></label>
+        <div class="settings">
+            <div class="toggle-switch">
+                <input type="checkbox" id="modeToggle">
+                <label for="modeToggle"><span></span></label>
+            </div>
+            <div class="language-selector">
+                <select id="languageSelect">
+                    <option value="com" selected>US</option>
+                    <option value="co.uk">UK</option>
+                    <option value="ca">Canada</option>
+                    <option value="com.au">Australia</option>
+                    <option value="in">India</option>
+                </select>
+            </div>
         </div>
     </div>
 
@@ -195,20 +214,34 @@
         });
 
         document.getElementById('engineSelect').addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const selectedEngine = selectedOption.value;
-            const iconSrc = selectedOption.getAttribute('data-icon');
-            const param = selectedOption.getAttribute('data-param'); // Get the parameter name (q or field-keywords)
+            updateSearchEngine();
+        });
+
+        document.getElementById('languageSelect').addEventListener('change', function() {
+            updateSearchEngine();
+        });
+
+        function updateSearchEngine() {
+            const selectedEngineOption = document.getElementById('engineSelect').selectedOptions[0];
+            const selectedLanguage = document.getElementById('languageSelect').value;
+            const selectedEngine = selectedEngineOption.value;
+            const iconSrc = selectedEngineOption.getAttribute('data-icon');
+            const param = selectedEngineOption.getAttribute('data-param');
             const form = document.getElementById('searchForm');
             const input = document.getElementById('searchInput');
             const engineIcon = document.getElementById('engineIcon');
 
-            form.action = selectedEngine;
+            // Update form action with selected language/region
+            let engineDomain = selectedEngine.replace(/\.com/, `.${selectedLanguage}`);
+            form.action = engineDomain;
             input.name = param; // Set the input name to 'q' or 'field-keywords' based on selected engine
-            input.placeholder = `Search with ${selectedOption.text}...`;
+            input.placeholder = `Search with ${selectedEngineOption.text}...`;
             engineIcon.src = iconSrc;
-            engineIcon.alt = `${selectedOption.text} Icon`;
-        });
+            engineIcon.alt = `${selectedEngineOption.text} Icon`;
+        }
+
+        // Initial setup to apply the correct domain on page load
+        updateSearchEngine();
     </script>
 </body>
 </html>
