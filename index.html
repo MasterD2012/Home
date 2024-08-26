@@ -172,12 +172,12 @@
             <div class="search-box">
                 <img id="engineIcon" src="https://www.google.com/favicon.ico" alt="Engine Icon">
                 <select id="engineSelect" name="engine">
-                    <option value="https://www.google.com/search" data-icon="https://www.google.com/favicon.ico">   Google</option>
-                    <option value="https://www.bing.com/search" data-icon="https://www.bing.com/sa/simg/favicon-2x.ico">   Bing</option>
-                    <option value="https://www.amazon.com/s" data-icon="https://www.amazon.com/favicon.ico">   Amazon</option>
-                    <option value="https://duckduckgo.com/" data-icon="https://duckduckgo.com/favicon.ico">   DuckDuckGo</option>
+                    <option value="https://www.google.com/search" data-icon="https://www.google.com/favicon.ico" data-param="q">   Google</option>
+                    <option value="https://www.bing.com/search" data-icon="https://www.bing.com/sa/simg/favicon-2x.ico" data-param="q">   Bing</option>
+                    <option value="https://www.amazon.com/s" data-icon="https://www.amazon.com/favicon.ico" data-param="field-keywords">   Amazon</option>
+                    <option value="https://duckduckgo.com/" data-icon="https://duckduckgo.com/favicon.ico" data-param="q">   DuckDuckGo</option>
                 </select>
-                <input type="text" name="q" placeholder="Search with Google..." required>
+                <input type="text" id="searchInput" name="q" placeholder="Search with Google..." required>
                 <button type="submit">
                     <i class="fas fa-search"></i>
                 </button>
@@ -198,20 +198,13 @@
             const selectedOption = this.options[this.selectedIndex];
             const selectedEngine = selectedOption.value;
             const iconSrc = selectedOption.getAttribute('data-icon');
+            const param = selectedOption.getAttribute('data-param'); // Get the parameter name (q or field-keywords)
             const form = document.getElementById('searchForm');
-            const input = document.querySelector('.search-box input[type="text"]');
+            const input = document.getElementById('searchInput');
             const engineIcon = document.getElementById('engineIcon');
 
-            if (selectedEngine === 'https://www.amazon.com/s') {
-                form.action = selectedEngine;
-                form.method = 'get';
-                form.name = 'field-keywords';
-            } else {
-                form.action = selectedEngine;
-                form.method = 'get';
-                form.name = 'q';
-            }
-
+            form.action = selectedEngine;
+            input.name = param; // Set the input name to 'q' or 'field-keywords' based on selected engine
             input.placeholder = `Search with ${selectedOption.text}...`;
             engineIcon.src = iconSrc;
             engineIcon.alt = `${selectedOption.text} Icon`;
