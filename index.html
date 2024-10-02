@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta content="Launch Pad" property="og:title" />
-    <meta content="Home - For Rocket Browser" property="og:description" />
-    <title>Launch pad</title>
+    <title>Launch Pad</title>
     <link rel="icon" type="image/x-icon" href="https://masterd2012.github.io/home/favicon.ico">
     <style>
         body {
@@ -42,41 +39,48 @@
         .top-bar a:hover {
             text-decoration: underline;
         }
-        .settings {
-            display: flex;
-            align-items: center;
-        }
-        .toggle-switch {
-            display: flex;
-            align-items: center;
-            margin-right: 20px;
-        }
-        .toggle-switch input {
-            display: none;
-        }
-        .toggle-switch label {
+        .settings-button {
             cursor: pointer;
-            background-color: #ccc;
-            border-radius: 20px;
-            padding: 5px 10px;
-            display: flex;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        /* Settings Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
             align-items: center;
         }
-        .toggle-switch label span {
-            margin-left: 5px;
-            font-size: 14px;
+        .modal-content {
+            background-color: white;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            transition: background-color 0.3s, color 0.3s;
         }
-        .toggle-switch input:checked + label {
-            background-color: #4CAF50;
+        .modal.dark-mode .modal-content {
+            background-color: #444;
+            color: white;
         }
-        .toggle-switch input:checked + label span:before {
-            content: 'Dark Mode';
+        .modal-header {
+            font-size: 18px;
+            margin-bottom: 20px;
         }
-        .toggle-switch label span:before {
-            content: 'Light Mode';
+        .modal-footer {
+            margin-top: 20px;
+            text-align: right;
         }
-        .language-selector {
-            margin-right: 20px;
+        .modal-footer button {
+            padding: 5px 10px;
         }
         .search-container {
             background-color: #fff;
@@ -173,33 +177,19 @@
             <a href="https://discord.com/">Discord</a>
             <a href="https://chat.openai.com">ChatGPT</a>
         </div>
-        <div class="settings">
-            <div class="toggle-switch">
-                <input type="checkbox" id="modeToggle">
-                <label for="modeToggle"><span></span></label>
-            </div>
-            <div class="language-selector">
-                <select id="languageSelect">
-                    <option value="co.uk" selected>UK</option>
-                    <option value="com">US</option>
-                    <option value="ca">Canada</option>
-                    <option value="com.au">Australia</option>
-                    <option value="in">India</option>
-                </select>
-            </div>
-        </div>
+        <div class="settings-button" id="openSettings">Settings</div>
     </div>
 
     <div class="search-container">
-        <h1>Launch pad</h1>
+        <h1>Launch Pad</h1>
         <form id="searchForm" action="https://www.google.com/search" method="get">
             <div class="search-box">
                 <img id="engineIcon" src="https://www.google.com/favicon.ico" alt="Engine Icon">
                 <select id="engineSelect" name="engine">
-                    <option value="https://www.google.com/search" data-icon="https://www.google.com/favicon.ico" data-param="q">   Google</option>
-                    <option value="https://www.bing.com/search" data-icon="https://www.bing.com/sa/simg/favicon-2x.ico" data-param="q">   Bing</option>
-                    <option value="https://www.amazon.com/s" data-icon="https://www.amazon.com/favicon.ico" data-param="field-keywords">   Amazon</option>
-                    <option value="https://duckduckgo.com/" data-icon="https://duckduckgo.com/favicon.ico" data-param="q">   DuckDuckGo</option>
+                    <option value="https://www.google.com/search" data-icon="https://www.google.com/favicon.ico" data-param="q">Google</option>
+                    <option value="https://www.bing.com/search" data-icon="https://www.bing.com/sa/simg/favicon-2x.ico" data-param="q">Bing</option>
+                    <option value="https://www.amazon.com/s" data-icon="https://www.amazon.com/favicon.ico" data-param="field-keywords">Amazon</option>
+                    <option value="https://duckduckgo.com/" data-icon="https://duckduckgo.com/favicon.ico" data-param="q">DuckDuckGo</option>
                 </select>
                 <input type="text" id="searchInput" name="q" placeholder="Search with Google..." required>
                 <button type="submit">
@@ -209,21 +199,93 @@
         </form>
     </div>
 
-    <script>
-        // Toggle light/dark mode
-        const modeToggle = document.getElementById('modeToggle');
-        const body = document.body;
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Settings</div>
+            <div>
+                <label for="modeToggle">Dark Mode</label>
+                <input type="checkbox" id="modeToggle">
+            </div>
+            <div>
+                <label for="languageSelect">Region</label>
+                <select id="languageSelect">
+                    <option value="com" selected>US</option>
+                    <option value="co.uk">UK</option>
+                    <option value="ca">Canada</option>
+                    <option value="com.au">Australia</option>
+                    <option value="in">India</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button id="closeSettings">Close</button>
+            </div>
+        </div>
+    </div>
 
-        modeToggle.addEventListener('change', function() {
-            body.classList.toggle('dark-mode');
-        });
+    <script>
+        // Load settings from localStorage
+        function loadSettings() {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            const region = localStorage.getItem('region') || 'com';
+            const searchEngine = localStorage.getItem('searchEngine') || 'https://www.google.com/search';
+
+            // Apply dark mode setting
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('modeToggle').checked = true;
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.getElementById('modeToggle').checked = false;
+            }
+
+            // Apply region setting
+            document.getElementById('languageSelect').value = region;
+
+            // Apply search engine setting
+            const engineSelect = document.getElementById('engineSelect');
+            for (let i = 0; i < engineSelect.options.length; i++) {
+                if (engineSelect.options[i].value === searchEngine) {
+                    engineSelect.selectedIndex = i;
+                    updateSearchEngine();
+                    break;
+                }
+            }
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            const darkMode = document.getElementById('modeToggle').checked;
+            const region = document.getElementById('languageSelect').value;
+            const searchEngine = document.getElementById('engineSelect').value;
+
+            localStorage.setItem('darkMode', darkMode);
+            localStorage.setItem('region', region);
+            localStorage.setItem('searchEngine', searchEngine);
+        }
 
         document.getElementById('engineSelect').addEventListener('change', function() {
             updateSearchEngine();
+            saveSettings();
         });
 
         document.getElementById('languageSelect').addEventListener('change', function() {
+            saveSettings();
             updateSearchEngine();
+        });
+
+        document.getElementById('modeToggle').addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode');
+            document.getElementById('settingsModal').classList.toggle('dark-mode');
+            saveSettings();
+        });
+
+        document.getElementById('openSettings').addEventListener('click', function() {
+            document.getElementById('settingsModal').style.display = 'flex';
+        });
+
+        document.getElementById('closeSettings').addEventListener('click', function() {
+            document.getElementById('settingsModal').style.display = 'none';
         });
 
         function updateSearchEngine() {
@@ -232,21 +294,15 @@
             const selectedEngine = selectedEngineOption.value;
             const iconSrc = selectedEngineOption.getAttribute('data-icon');
             const param = selectedEngineOption.getAttribute('data-param');
-            const form = document.getElementById('searchForm');
-            const input = document.getElementById('searchInput');
-            const engineIcon = document.getElementById('engineIcon');
 
-            // Update form action with selected language/region
-            let engineDomain = selectedEngine.replace(/\.com/, `.${selectedLanguage}`);
-            form.action = engineDomain;
-            input.name = param; // Set the input name to 'q' or 'field-keywords' based on selected engine
-            input.placeholder = `Search with ${selectedEngineOption.text}...`;
-            engineIcon.src = iconSrc;
-            engineIcon.alt = `${selectedEngineOption.text} Icon`;
+            let engineDomain = selectedEngine.replace('.com', '.' + selectedLanguage);
+            document.getElementById('searchForm').action = engineDomain;
+            document.getElementById('searchInput').name = param;
+            document.getElementById('engineIcon').src = iconSrc;
         }
 
-        // Initial setup to apply the correct domain on page load
-        updateSearchEngine();
+        // Load saved settings on page load
+        loadSettings();
     </script>
 </body>
 </html>
